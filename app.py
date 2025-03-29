@@ -5,7 +5,7 @@ import requests
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
-# Authenticate
+# Authenticate Google Drive
 gauth = GoogleAuth()
 gauth.LocalWebserverAuth()  # Creates local web server for authentication
 
@@ -22,7 +22,7 @@ def download_file(file_id, file_name):
 
 # Download the movie list and similarity matrix files using pydrive
 download_file('1sA855TxW06kVm-PISKG2zQOamy_4qmUO', 'simi.pkl')
-download_file('your_movie_list_file_id', 'movie_list.pkl')  # Replace with your actual movie list file ID
+download_file('1Ia-PoYlBFuRy2Km9zXDbhMjcHQsUcpIK', 'movie_list.pkl')  # Replace with your actual movie list file ID
 
 # Function to fetch movie poster
 def fetch_poster(movie_id):
@@ -54,9 +54,13 @@ def recommend_movies(movie):
         return [], []
 
 # Load movie list and similarity data
-movies_list = pkl.load(open('movie_list.pkl', 'rb'))
-movies = pd.DataFrame(movies_list)
-simi = pkl.load(open('simi.pkl', 'rb'))
+try:
+    movies_list = pkl.load(open('movie_list.pkl', 'rb'))
+    movies = pd.DataFrame(movies_list)
+    simi = pkl.load(open('simi.pkl', 'rb'))
+except Exception as e:
+    print(f"Error loading movie list or similarity matrix: {e}")
+    st.error("Failed to load movie data. Please try again later.")
 
 # Streamlit UI
 st.title("Movie Recommendation System")
