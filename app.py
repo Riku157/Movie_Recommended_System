@@ -6,7 +6,7 @@ import gdown
 import pickle
 
 file_id = "1trWVZfoTqZMZagVv1m0ELMYNLwEcDP0E"  # Replace with your actual file ID
-url = f"https://drive.google.com/file/d/1trWVZfoTqZMZagVv1m0ELMYNLwEcDP0E/view?usp=sharing"
+url = f"https://drive.google.com/uc?id=1trWVZfoTqZMZagVv1m0ELMYNLwEcDP0E"
 output = "simi.pkl"
 
 # Download the file
