@@ -2,78 +2,66 @@ import streamlit as st
 import pickle as pkl
 import pandas as pd
 import requests
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
+import gdown
+import pickle
 
-# Authenticate Google Drive
-gauth = GoogleAuth()
-gauth.LocalWebserverAuth()  # Creates local web server for authentication
+file_id = "1sA855TxW06kVm-PISKG2zQOamy_4qmUO"  # Replace with your actual file ID
+url = f"https://drive.google.com/uc?id={file_id}"
+output = "simi.pkl"
 
-drive = GoogleDrive(gauth)
+# Download the file
+gdown.download(url, output, quiet=False)
 
-# Function to download a file from Google Drive using pydrive
-def download_file(file_id, file_name):
-    try:
-        file = drive.CreateFile({'id': file_id})
-        file.GetContentFile(file_name)
-        print(f"File {file_name} downloaded successfully.")
-    except Exception as e:
-        print(f"Error downloading file: {e}")
+# Load the similarity matrix
+with open(output, "rb") as f:
+    simi = pickle.load(f)
 
-# Download the movie list and similarity matrix files using pydrive
-download_file('1sA855TxW06kVm-PISKG2zQOamy_4qmUO', 'simi.pkl')
-download_file('1Ia-PoYlBFuRy2Km9zXDbhMjcHQsUcpIK', 'movie_list.pkl')  # Replace with your actual movie list file ID
 
-# Function to fetch movie poster
 def fetch_poster(movie_id):
-    try:
-        response = requests.get(f'https://api.themoviedb.org/3/movie/{movie_id}?api_key=1f5930a5b48827077a2d420afa7fa447')
-        data = response.json()
-        poster_url = "https://image.tmdb.org/t/p/w500" + data['poster_path']
-        return poster_url
-    except Exception as e:
-        print(f"Error fetching poster: {e}")
-        return "https://image.tmdb.org/t/p/w500/default_image.jpg"  # Placeholder image if there's an error
+    response = requests.get('https://api.themoviedb.org/3/movie/{}?api_key=1f5930a5b48827077a2d420afa7fa447'.format(movie_id))
+    data = response.json()
+    print(data)
+    return "https://image.tmdb.org/t/p/w500" + data['poster_path']
 
-# Function to recommend movies
+
 def recommend_movies(movie):
-    try:
-        movies_index = movies[movies['title'] == movie].index[0]
-        distance = simi[movies_index]
-        movies_list = sorted(list(enumerate(distance)), reverse=True, key=lambda x: x[1])[1:6]  # Top 5 recommendations
+    movies_index = movies[movies['title'] == movie].index[0]
+    distance = simi[movies_index]
+    movies_list = sorted(list(enumerate(distance)), reverse=True, key=lambda x: x[1])[1:6]
 
-        recommend_movies = []
-        poster = []
-        for i in movies_list:
-            movie_id = movies.iloc[i[0]].movie_id
-            recommend_movies.append(movies.iloc[i[0]].title)
-            poster.append(fetch_poster(movie_id))
-        return recommend_movies, poster
-    except Exception as e:
-        print(f"Error in recommending movies: {e}")
-        return [], []
 
-# Load movie list and similarity data
-try:
-    movies_list = pkl.load(open('movie_list.pkl', 'rb'))
-    movies = pd.DataFrame(movies_list)
-    simi = pkl.load(open('simi.pkl', 'rb'))
-except Exception as e:
-    print(f"Error loading movie list or similarity matrix: {e}")
-    st.error("Failed to load movie data. Please try again later.")
+    recommend_movies=[]
+    poster=[]
+    for i in movies_list:
+        movie_id = movies.iloc[i[0]].movie_id
+        recommend_movies.append(movies.iloc[i[0]].title)
+        poster.append(fetch_poster(movie_id))
+    return recommend_movies, poster
 
-# Streamlit UI
+
+movies_list = pkl.load(open('movie_list.pkl', 'rb'))
+movies = pd.DataFrame(movies_list)
+simi = pkl.load(open('simi.pkl', 'rb'))
+
 st.title("Movie Recommendation System")
 
-option = st.selectbox('Choose a Movie', movies['title'].values)
+
+option = st.selectbox('Name your Movie', movies_list['title'].values)
 if st.button('Recommend Movie'):
-    with st.spinner('Generating recommendations...'):
-        name, posters = recommend_movies(option)
-        if name and posters:
-            col1, col2, col3, col4, col5 = st.columns(5)
-            for i, col in enumerate([col1, col2, col3, col4, col5]):
-                with col:
-                    st.text(name[i])
-                    st.image(posters[i])
-        else:
-            st.error("Sorry, no recommendations available.")
+    name,posters=recommend_movies(option)
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col1:
+        st.text(name[0])
+        st.image(posters[0])
+    with col2:
+        st.text(name[1])
+        st.image(posters[1])
+    with col3:
+        st.text(name[2])
+        st.image(posters[2])
+    with col4:
+        st.text(name[3])
+        st.image(posters[3])
+    with col5:
+        st.text(name[4])
+        st.image(posters[4])
