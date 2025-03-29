@@ -1,3 +1,6 @@
+import utils.http_session
+import utils.transport
+import utils.session
 import streamlit as st
 import pickle as pkl
 import pandas as pd
@@ -6,14 +9,14 @@ import gdown
 import pickle
 
 file_id = "1sA855TxW06kVm-PISKG2zQOamy_4qmUO"  # Replace with your actual file ID
-url = url = f"https://drive.google.com/uc?id=1sA855TxW06kVm-PISKG2zQOamy_4qmUO"
+url = f"https://drive.google.com/uc?id=1sA855TxW06kVm-PISKG2zQOamy_4qmUO"
 output = "simi.pkl"
 
 # Download the file
 gdown.download(url, output, quiet=False)
 
 # Load the similarity matrix
-with open('simi.pkl', 'rb') as f:
+with open(output, "rb") as f:
     simi = pickle.load(f)
 
 
