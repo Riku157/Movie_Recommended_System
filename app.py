@@ -7,16 +7,16 @@ from pydrive.drive import GoogleDrive
 
 # Authenticate
 gauth = GoogleAuth()
-gauth.LocalWebserverAuth()  # Creates a local web server for authentication
+gauth.LocalWebserverAuth()  # Creates local web server for authentication
 
 drive = GoogleDrive(gauth)
 
-# Download the simi.pkl and movie_list.pkl files from Google Drive
+# Function to download a file from Google Drive using pydrive
 def download_file(file_id, file_name):
     file = drive.CreateFile({'id': file_id})
     file.GetContentFile(file_name)
 
-# Download the movie list and similarity matrix files
+# Download the movie list and similarity matrix files using pydrive
 download_file('1sA855TxW06kVm-PISKG2zQOamy_4qmUO', 'simi.pkl')
 download_file('movie_list_file_id', 'movie_list.pkl')  # Replace 'movie_list_file_id' with actual ID
 
