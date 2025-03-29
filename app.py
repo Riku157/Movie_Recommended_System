@@ -13,7 +13,7 @@ output = "simi.pkl"
 gdown.download(url, output, quiet=False)
 
 # Load the similarity matrix
-with open(output, "rb") as f:
+with open('simi.pkl', 'rb') as f:
     simi = pickle.load(f)
 
 
