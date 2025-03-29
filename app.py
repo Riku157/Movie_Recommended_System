@@ -5,7 +5,7 @@ import requests
 import gdown
 import pickle
 
-file_id = "1trWVZfoTqZMZagVv1m0ELMYNLwEcDP0E"  # Replace with your actual file ID
+file_id = "1sA855TxW06kVm-PISKG2zQOamy_4qmUO"  # Replace with your actual file ID
 url = f"https://drive.google.com/uc?id={file_id}"
 output = "simi.pkl"
 
