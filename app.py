@@ -2,6 +2,19 @@ import streamlit as st
 import pickle as pkl
 import pandas as pd
 import requests
+import gdown
+import pickle
+
+file_id = "1trWVZfoTqZMZagVv1m0ELMYNLwEcDP0E"  # Replace with your actual file ID
+url = f"https://drive.google.com/file/d/1trWVZfoTqZMZagVv1m0ELMYNLwEcDP0E/view?usp=sharing"
+output = "simi.pkl"
+
+# Download the file
+gdown.download(url, output, quiet=False)
+
+# Load the similarity matrix
+with open(output, "rb") as f:
+    simi = pickle.load(f)
 
 
 def fetch_poster(movie_id):
