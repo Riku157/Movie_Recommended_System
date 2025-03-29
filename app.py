@@ -2,19 +2,20 @@ import streamlit as st
 import pickle as pkl
 import pandas as pd
 import requests
-import gdown
-import pickle
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 
-file_id = "1sA855TxW06kVm-PISKG2zQOamy_4qmUO"  # Replace with your actual file ID
-url = f"https://drive.google.com/uc?id=1sA855TxW06kVm-PISKG2zQOamy_4qmUO"
-output = "simi.pkl"
+# Authenticate
+gauth = GoogleAuth()
+gauth.LocalWebserverAuth()  # Creates local webserver and auto handles authentication.
+
+drive = GoogleDrive(gauth)
 
 # Download the file
-gdown.download(url, output, quiet=False)
+file_id = '1sA855TxW06kVm-PISKG2zQOamy_4qmUO'
+file = drive.CreateFile({'id': file_id})
+file.GetContentFile('simi.pkl')
 
-# Load the similarity matrix
-with open(output, "rb") as f:
-    simi = pickle.load(f)
 
 
 def fetch_poster(movie_id):
