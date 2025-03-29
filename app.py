@@ -13,11 +13,16 @@ drive = GoogleDrive(gauth)
 
 # Function to download a file from Google Drive using pydrive
 def download_file(file_id, file_name):
-    file = drive.CreateFile({'id': file_id})
-    file.GetContentFile(file_name)
+    try:
+        file = drive.CreateFile({'id': file_id})
+        file.GetContentFile(file_name)
+        print(f"File {file_name} downloaded successfully.")
+    except Exception as e:
+        print(f"Error downloading file: {e}")
 
 # Download the movie list and similarity matrix files using pydrive
 download_file('1sA855TxW06kVm-PISKG2zQOamy_4qmUO', 'simi.pkl')
+download_file('your_movie_list_file_id', 'movie_list.pkl')  # Replace with your actual movie list file ID
 
 # Function to fetch movie poster
 def fetch_poster(movie_id):
@@ -58,12 +63,13 @@ st.title("Movie Recommendation System")
 
 option = st.selectbox('Choose a Movie', movies['title'].values)
 if st.button('Recommend Movie'):
-    name, posters = recommend_movies(option)
-    if name and posters:
-        col1, col2, col3, col4, col5 = st.columns(5)
-        for i, col in enumerate([col1, col2, col3, col4, col5]):
-            with col:
-                st.text(name[i])
-                st.image(posters[i])
-    else:
-        st.error("Sorry, no recommendations available.")
+    with st.spinner('Generating recommendations...'):
+        name, posters = recommend_movies(option)
+        if name and posters:
+            col1, col2, col3, col4, col5 = st.columns(5)
+            for i, col in enumerate([col1, col2, col3, col4, col5]):
+                with col:
+                    st.text(name[i])
+                    st.image(posters[i])
+        else:
+            st.error("Sorry, no recommendations available.")
